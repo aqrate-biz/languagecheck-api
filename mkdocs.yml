@@ -32,9 +32,14 @@ theme:
 plugins:
   - search # ricerca integrata
   - swagger-ui-tag:
-      # Tema di Swagger UI — opzioni: flattop, material, monokai,
-      # muted, newspaper, outline, feeling-blue, gruvbox
-      swagger_ui_theme: feeling-blue
+      # Opzioni supportate dal plugin (compatibili con --strict)
+      background: "#f5f7fb"
+      docExpansion: none
+      syntaxHighlightTheme: monokai
+      tryItOutEnabled: true
+      filter: true
+      dark_scheme_name: slate
+      validatorUrl: none
 
 nav:
   - Home: index.md
