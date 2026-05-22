@@ -1,7 +1,7 @@
 site_name: LanguageCheck developer portal
 site_author: LanguageCheck.ai
 site_description: Documentation for using the LanguageCheck API
-site_url: https://aqrate-biz.github.io/languagecheck-api/
+site_url: https://developers.languagecheck.ai
 
 theme:
   name: material # tema Material Design
