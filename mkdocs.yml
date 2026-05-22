@@ -1,32 +1,29 @@
-site_name: My API Documentation
-site_description: Documentazione della mia API
+site_name: LanguageCheck developer portal
+site_author: LanguageCheck.ai
+site_description: Documentation for using the LanguageCheck API
 site_url: https://aqrate-biz.github.io/languagecheck-api/
 
 theme:
   name: material # tema Material Design
+  logo: assets/logo.webp
+  favicon: assets/favicon.ico
   palette:
     # Modalità chiara
     - scheme: default
-      primary: blue # colore principale
-      accent: blue
-      toggle:
-        icon: material/brightness-7
-        name: Passa al tema scuro
-    # Modalità scura
-    - scheme: slate
-      primary: blue
-      accent: blue
-      toggle:
-        icon: material/brightness-4
-        name: Passa al tema chiaro
+      primary: indigo # colore principale
+      accent: indigo
   font:
-    text: Roboto
-    code: Roboto Mono
+    text: Inter
+    code: Google Sans Code
   features:
-    - navigation.tabs # navigazione a tab in alto
     - navigation.sections # sezioni nel menu laterale
     - navigation.top # pulsante "torna su"
+    - navigation.instant # navigazione istantanea senza ricaricare
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
     - search.highlight # evidenzia risultati ricerca
+    - search.suggest # suggerimenti durante la digitazione
     - content.code.copy # pulsante copia sui blocchi codice
 
 plugins:
@@ -41,10 +38,14 @@ plugins:
       dark_scheme_name: slate
       validatorUrl: none
 
+extra:
+  version:
+    provider: mike
+
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
-  - Autenticazione: authentication.md
+  - Authentication: authentication.md
   - API Reference: api-reference.md
 
 markdown_extensions:
