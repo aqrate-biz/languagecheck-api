@@ -1,6 +1,6 @@
 site_name: My API Documentation
 site_description: Documentazione della mia API
-site_url: https://<tuo-utente>.github.io/<nome-repo>
+site_url: https://aqrate-biz.github.io/languagecheck-api/
 
 theme:
   name: material # tema Material Design
