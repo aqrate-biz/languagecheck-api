@@ -1,0 +1,53 @@
+site_name: My API Documentation
+site_description: Documentazione della mia API
+site_url: https://<tuo-utente>.github.io/<nome-repo>
+
+theme:
+  name: material # tema Material Design
+  palette:
+    # Modalità chiara
+    - scheme: default
+      primary: blue # colore principale
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Passa al tema scuro
+    # Modalità scura
+    - scheme: slate
+      primary: blue
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Passa al tema chiaro
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs # navigazione a tab in alto
+    - navigation.sections # sezioni nel menu laterale
+    - navigation.top # pulsante "torna su"
+    - search.highlight # evidenzia risultati ricerca
+    - content.code.copy # pulsante copia sui blocchi codice
+
+plugins:
+  - search # ricerca integrata
+  - swagger-ui-tag:
+      # Tema di Swagger UI — opzioni: flattop, material, monokai,
+      # muted, newspaper, outline, feeling-blue, gruvbox
+      swagger_ui_theme: feeling-blue
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Autenticazione: authentication.md
+  - API Reference: api-reference.md
+
+markdown_extensions:
+  - admonition # box note/warning/tip
+  - pymdownx.highlight: # syntax highlighting
+      anchor_linenums: true
+  - pymdownx.superfences # blocchi codice annidati
+  - pymdownx.tabbed: # tab nei contenuti
+      alternate_style: true
+  - attr_list
+  - md_in_html

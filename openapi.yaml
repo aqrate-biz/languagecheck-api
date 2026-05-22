@@ -1,0 +1,431 @@
+swagger: "2.0"
+
+# ---------------------------------------------------------------------------
+# Info
+# ---------------------------------------------------------------------------
+info:
+  title: LanguageCheck API
+  description: |
+    These are the APIs for LanguageCheck (languagecheck.ai), enabling direct access to its services through RESTful calls.
+  version: "2.0.0"
+  termsOfService: https://languagecheck.ai/terms
+  contact:
+    name: LanguageCheck crew
+    url: https://languagecheck.ai
+    email: crew@languagecheck.ai
+
+# ---------------------------------------------------------------------------
+# Server & Configurazione Endpoint GCP
+# ---------------------------------------------------------------------------
+
+host: apitest.languagecheck.it
+basePath: /v2
+schemes:
+  - https
+# Configurazione necessaria per associare il dominio personalizzato/gateway su GCP
+x-google-endpoints:
+  - name: apitest.languagecheck.it
+    allowCors: true
+
+# ---------------------------------------------------------------------------
+# Backend Predefinito (Spostato a livello globale per evitare ripetizioni)
+# ---------------------------------------------------------------------------
+x-google-backend:
+  address: https://languagecheck-test.ey.r.appspot.com
+  path_translation: APPEND_PATH_TO_ADDRESS
+  deadline: 600.0
+  disable_auth: true
+
+# ---------------------------------------------------------------------------
+# 1. CONFIGURAZIONE RATE LIMITING (METRICHE E QUOTE GLOBALI)
+# ---------------------------------------------------------------------------
+x-google-management:
+  metrics:
+    - name: "requests"
+      displayName: "Requests"
+      valueType: INT64
+      metricKind: DELTA
+  quota:
+    limits:
+      - name: "requests-limit"
+        metric: "requests"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 2000
+
+# ---------------------------------------------------------------------------
+# Global security: API key required on all endpoints
+# ---------------------------------------------------------------------------
+security:
+  - ApiKeyAuth: []
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+paths:
+  /status:
+    get:
+      operationId: getStatus
+      summary: Get service status
+      description: Returns the current status of the service and the health of its components.
+      tags:
+        - Status
+      security:
+        - ApiKeyAuth: []
+      x-google-quota:
+        metricCosts:
+          "requests": 1
+      parameters: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Service operational
+          schema:
+            $ref: "#/definitions/StatusResponse"
+          examples:
+            application/json:
+              success: true
+              status: 200
+              message: "Service operational"
+              metadata:
+                timestamp: "2024-05-09T12:00:00Z"
+                requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
+                version: "2.0.0"
+              data:
+                status: "ok"
+                version: "2.0.0"
+                timestamp: "2024-05-09T12:00:00Z"
+              errors: null
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+  /check:
+    post:
+      operationId: postCheck
+      summary: Check bilingual segment for translation issues
+      description: Analyze the provided text and return detected issues and suggestions.
+      tags:
+        - Check
+      security:
+        - ApiKeyAuth: []
+      x-google-quota:
+        metricCosts:
+          "requests": 1
+      parameters:
+        - in: body
+          name: body
+          description: Input data for check
+          required: true
+          schema:
+            type: object
+            required:
+              - source
+              - target
+              - sourceLanguage
+              - targetLanguage
+            properties:
+              source:
+                type: string
+                description: Source text to be checked
+                example: "This is an example sentence with a error."
+              target:
+                type: string
+                description: Target text to be checked
+                example: "Questo è un esempio di frase con un errore."
+              sourceLanguage:
+                type: string
+                description: Language of the source text
+                example: "en"
+              targetLanguage:
+                type: string
+                description: Language of the target text
+                example: "it"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Check completed successfully
+          schema:
+            $ref: "#/definitions/CheckResponse"
+        400:
+          description: Bad request (e.g., missing or invalid 'text' field)
+          schema:
+            $ref: "#/definitions/ErrorApiResponse"
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        402:
+          $ref: "#/responses/WordsQuotaExceededError"
+        403:
+          $ref: "#/responses/ForbiddenError"
+        404:
+          $ref: "#/responses/NotFoundError"
+        405:
+          $ref: "#/responses/MethodNotAllowedError"
+        408:
+          $ref: "#/responses/RequestTimeoutError"
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+  /{apiType}:
+    get:
+      operationId: getApiType
+      summary: Get generic
+      description: Generic endpoint
+      parameters:
+        - name: apiType
+          in: path
+          required: true
+          type: string
+          description: Type of API to retrieve
+      security:
+        - ApiKeyAuth: []
+      x-google-quota:
+        metricCosts:
+          "requests": 1
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: "#/definitions/ApiResponse"
+          examples:
+            application/json:
+              success: true
+              status: 200
+              message: "Operation completed successfully"
+              metadata:
+                timestamp: "2024-05-09T12:00:00Z"
+                requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
+                version: "2.0.0"
+              data:
+                status: "ok"
+                version: "2.0.0"
+                timestamp: "2024-05-09T12:00:00Z"
+              errors: null
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+
+# ---------------------------------------------------------------------------
+# Definitions, Responses, Security Definitions
+# ---------------------------------------------------------------------------
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: x-api-key
+
+responses:
+  UnauthorizedError:
+    description: Missing or invalid API key
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  WordsQuotaExceededError:
+    description: Words quota exceeded
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  ForbiddenError:
+    description: Insufficient permissions
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  NotFoundError:
+    description: Resource not found
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  MethodNotAllowedError:
+    description: HTTP method not allowed
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  RequestTimeoutError:
+    description: Request timed out
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  TooManyRequestsError:
+    description: Rate limit exceeded
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  InternalServerError:
+    description: Internal server error
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  ServiceUnavailableError:
+    description: Service unavailable
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+
+definitions:
+  ApiResponse:
+    type: object
+    required:
+      - success
+      - status
+      - message
+      - metadata
+    properties:
+      success:
+        type: boolean
+        description: Outcome of the request
+        example: true
+      status:
+        type: integer
+        description: HTTP status code of the response
+        example: 200
+      message:
+        type: string
+        description: Descriptive message for the outcome
+        example: "Operation completed successfully"
+      metadata:
+        $ref: "#/definitions/ResponseMetadata"
+      errors:
+        type: array
+        description: List of errors (null on success)
+        items:
+          $ref: "#/definitions/ApiError"
+  ResponseMetadata:
+    type: object
+    required:
+      - timestamp
+      - requestId
+      - version
+    properties:
+      timestamp:
+        type: string
+        format: date-time
+        description: UTC timestamp of the response
+        example: "2024-05-09T12:00:00Z"
+      requestId:
+        type: string
+        description: Unique request ID (useful for debugging)
+        example: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
+      version:
+        type: string
+        description: API version
+        example: "2.0.0"
+  ApiError:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+        description: Error identifier code
+        example: "VALIDATION_ERROR"
+      field:
+        type: string
+        description: Field involved (optional, for validation errors)
+        example: "email"
+      message:
+        type: string
+        description: Human-readable error description
+        example: "The email format is not valid"
+  Status:
+    type: object
+    required:
+      - system
+      - ai
+    properties:
+      system:
+        type: string
+        enum:
+          [
+            operational,
+            degraded_performance,
+            partial_outage,
+            major_outage,
+            under_maintenance,
+          ]
+        description: Operational status of the system
+        example: operational
+      ai:
+        type: string
+        enum:
+          [
+            operational,
+            degraded_performance,
+            partial_outage,
+            major_outage,
+            under_maintenance,
+          ]
+        description: Operational status of the AI service
+        example: operational
+  CheckResult:
+    type: object
+    required:
+      - evaluation
+      - isAmbiguous
+      - minorErrors
+      - majorErrors
+      - fluencyIssues
+      - minorErrorsExplanation
+      - majorErrorsExplanation
+      - fluencyIssuesExplanation
+    properties:
+      evaluation:
+        type: string
+        description: Evaluation result
+        example: "pass"
+      isAmbiguous:
+        type: boolean
+        description: Indicates if the result is ambiguous
+        example: false
+      minorErrors:
+        type: boolean
+        description: Indicates if there are minor errors
+        example: true
+      majorErrors:
+        type: boolean
+        description: Indicates if there are major errors
+        example: false
+      fluencyIssues:
+        type: boolean
+        description: Indicates if there are fluency issues
+        example: true
+      minorErrorsExplanation:
+        type: string
+        description: Explanation of minor errors
+        example: "Minor spelling mistakes"
+      majorErrorsExplanation:
+        type: string
+        description: Explanation of major errors
+        example: ""
+      fluencyIssuesExplanation:
+        type: string
+        description: Explanation of fluency issues
+        example: "Some sentences are awkwardly phrased"
+  StatusResponse:
+    allOf:
+      - $ref: "#/definitions/ApiResponse"
+      - type: object
+        properties:
+          data:
+            $ref: "#/definitions/Status"
+  CheckResponse:
+    allOf:
+      - $ref: "#/definitions/ApiResponse"
+      - type: object
+        properties:
+          data:
+            $ref: "#/definitions/CheckResult"
+  ErrorApiResponse:
+    allOf:
+      - $ref: "#/definitions/ApiResponse"
+      - type: object
+        properties:
+          data:
+            type: string
+            description: Always null in case of error
+            example: null
