@@ -2,7 +2,7 @@
 
 For API support, contact:
 
-- crew@languagechec.ai
+- crew@languagecheck.ai
 
 Use this channel for integration issues, authentication errors, rate-limit questions, and unexpected API behavior.
 

@@ -70,8 +70,7 @@ paths:
       description: Returns the current status of the service and the health of its components.
       tags:
         - Status
-      security:
-        - ApiKeyAuth: []
+      security: []
       x-google-quota:
         metricCosts:
           "requests": 1
@@ -169,49 +168,6 @@ paths:
           $ref: "#/responses/MethodNotAllowedError"
         408:
           $ref: "#/responses/RequestTimeoutError"
-        429:
-          $ref: "#/responses/TooManyRequestsError"
-        500:
-          $ref: "#/responses/InternalServerError"
-        503:
-          $ref: "#/responses/ServiceUnavailableError"
-  /{apiType}:
-    get:
-      operationId: getApiType
-      summary: Get generic
-      description: Generic endpoint
-      parameters:
-        - name: apiType
-          in: path
-          required: true
-          type: string
-          description: Type of API to retrieve
-      security:
-        - ApiKeyAuth: []
-      x-google-quota:
-        metricCosts:
-          "requests": 1
-      produces:
-        - application/json
-      responses:
-        200:
-          description: Success
-          schema:
-            $ref: "#/definitions/ApiResponse"
-          examples:
-            application/json:
-              success: true
-              status: 200
-              message: "Operation completed successfully"
-              metadata:
-                timestamp: "2024-05-09T12:00:00Z"
-                requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
-                version: "2.0.0"
-              data:
-                status: "ok"
-                version: "2.0.0"
-                timestamp: "2024-05-09T12:00:00Z"
-              errors: null
         429:
           $ref: "#/responses/TooManyRequestsError"
         500:

@@ -39,6 +39,16 @@ extra:
   version:
     provider: mike
 
+extra_css:
+  - assets/stylesheets/firebase-auth.css
+
+extra_javascript:
+  - assets/javascripts/firebase-auth-config.js
+  - assets/javascripts/firebase-auth-overrides.js
+  - https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
+  - https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js
+  - assets/javascripts/firebase-auth.js
+
 nav:
   - Home: index.md
   - Authentication: authentication.md
