@@ -1,25 +1,44 @@
 # Support
 
-Use support channels when you need help with integration, authentication, quotas, or unexpected API behavior.
+For API support, contact:
 
-## Prepare Before Contacting Support
+- crew@languagechec.ai
 
-Include the following details in your request:
+Use this channel for integration issues, authentication errors, rate-limit questions, and unexpected API behavior.
 
-- Environment name
-- Approximate timestamp of the issue
-- Endpoint involved
-- Request identifier, if available
-- A short description of the observed behavior
+## Before You Contact Support
 
-## Common Topics
+Use a clear subject line, for example:
+
+- `[LanguageCheck API] 401 on /check in production`
+
+Include the following details in your message:
+
+- Environment (`dev`, `staging`, or `production`)
+- Approximate timestamp with timezone
+- Endpoint and HTTP method (for example `POST /check`)
+- HTTP status code and response body (if available)
+- Request ID or trace ID (if available)
+- Short description of expected vs actual behavior
+
+## Security Notes
+
+- Do not send API keys or other secrets by email.
+- Mask sensitive values in logs and screenshots.
+- If you suspect key exposure, rotate the key first, then contact support.
+
+## Common Requests
 
 - Access and authentication issues
 - API key provisioning
 - Rate limit increases
-- Unexpected response validation errors
+- Unexpected API responses or validation errors
 - Documentation clarifications
 
 ## Escalation
 
-If the issue affects production traffic, clearly indicate impact, affected timeframe, and any mitigation already in place.
+If the issue impacts production, mark it as urgent and include:
+
+- Business impact
+- Start time of the incident
+- Current mitigation or workaround

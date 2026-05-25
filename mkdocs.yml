@@ -5,6 +5,7 @@ site_url: https://developers.languagecheck.ai
 
 theme:
   name: material # tema Material Design
+  custom_dir: overrides
   logo: assets/logo.webp
   favicon: assets/favicon.ico
   palette:
@@ -25,6 +26,8 @@ theme:
     - search.highlight # evidenzia risultati ricerca
     - search.suggest # suggerimenti durante la digitazione
     - content.code.copy # pulsante copia sui blocchi codice
+    - toc.follow # indice che segue lo scroll
+    - toc.integrate # indice integrato nella pagina
 
 plugins:
   - search # ricerca integrata

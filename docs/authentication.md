@@ -2,26 +2,41 @@
 
 LanguageCheck API uses API key authentication.
 
-Include your API key in the request headers for every call to the API. Requests without a valid key are rejected.
+Send a valid API key in the `X-Api-Key` header for every API request.
 
-## How It Works
-
-1. Generate an API key from your developer workspace.
-2. Store the key securely in your application configuration.
-3. Send the key with each API request.
-4. Rotate the key if you suspect exposure.
-
-## Recommended Practices
-
-- Never expose API keys in client-side applications.
-- Store secrets in environment variables or a secret manager.
-- Use separate keys for development and production.
-- Rotate keys regularly.
-
-## Example
+## Required Header
 
 ```http
-Authorization: Bearer YOUR_API_KEY
+X-Api-Key: YOUR_API_KEY
 ```
 
-If your integration uses a different header convention, follow the contract defined by the API reference and your issued credentials.
+- `YOUR_API_KEY` must be a valid, active key generated from the Developer page.
+- Revoked, invalid, or malformed keys are rejected.
+
+## cURL Example
+
+```bash
+curl -X POST "https://api.languagecheck.ai/v2/..." \
+	-H "Content-Type: application/json" \
+	-H "X-Api-Key: YOUR_API_KEY" \
+	-d '{"source":"...","target":"..."}'
+```
+
+## Error Behavior
+
+- Missing `X-Api-Key` header: request is rejected.
+- Invalid or revoked key: request is rejected.
+- Key without required access scope (for future protected resources): request is rejected.
+
+Refer to endpoint-specific responses in the API reference for exact status codes and payload format.
+
+## Security Notes
+
+- Keep API keys server-side only.
+- Never expose keys in frontend apps, logs, or source control.
+- Use separate keys per environment and integration.
+- Rotate keys regularly, and immediately if exposure is suspected.
+
+## Related
+
+See the API Keys page for generation, visibility, and revocation rules.

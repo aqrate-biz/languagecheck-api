@@ -4,8 +4,18 @@ This page tracks notable changes to the LanguageCheck API and documentation.
 
 ## Unreleased
 
-- Initial developer portal structure published.
-- Authentication, API reference, and support pages added.
+- No changes yet.
+
+## 2.0.0 - 2026-05-25
+
+First public release of the LanguageCheck API.
+
+### Added
+
+- Initial `/check` endpoint for bilingual quality checks.
+- `/status` endpoint for service availability checks.
+- API key authentication.
+- Developer documentation portal (getting started, authentication, API reference, limits, and support pages).
 
 ## Versioning Policy
 

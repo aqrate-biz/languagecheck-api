@@ -1,26 +1,47 @@
 # API Keys
 
-API keys identify your application and authorize access to the LanguageCheck API.
+API keys let your applications authenticate with the LanguageCheck API.
 
-## Generate a Key
+## Who Can Create API Keys
 
-Create a key from the LanguageCheck developer area or the provisioning flow provided by your team.
+You must:
 
-When a new key is created, record it immediately and store it securely. Treat it like any other production secret.
+- Be logged in to https://languagecheck.ai
+- Have a Pro plan, or be part of a Team Enterprise workspace
 
-## Key Management
+In Team Enterprise, only users with the proper team permission can create team-wide API keys.
 
-- Create separate keys for each environment.
-- Assign one key per application or service when possible.
-- Revoke keys that are no longer in use.
-- Rotate keys during scheduled maintenance windows.
+## Where to Create Keys
 
-## Security Notes
+1. Log in to LanguageCheck.
+2. Open the user menu.
+3. Select **Developer**.
+4. Open the API Keys page.
+5. Click **Generate API Key**.
 
-- Do not commit keys to source control.
-- Do not embed keys in mobile or browser-distributed code.
-- Monitor usage to detect unexpected traffic patterns.
+## Important Behavior
 
-## Next Step
+- The full API key is shown only once, at creation time.
+- You can create multiple keys.
+- You can revoke keys you no longer need.
+- If you are a Team user with permission, you can create keys that work for the entire team.
 
-After generating a key, continue to the authentication guide to attach it to your requests.
+## Recommended Usage
+
+- Create separate keys for development, staging, and production.
+- Use one key per app or integration to simplify revocation.
+- Save keys in a secret manager or environment variables.
+- Never share keys in chat, tickets, screenshots, or email.
+- Never commit keys to source control.
+
+## Rotation and Revocation
+
+- Rotate keys regularly and immediately if exposure is suspected.
+- When rotating, create a new key first, deploy it, then revoke the old key.
+- Revoke unused or temporary keys as soon as possible.
+
+## Troubleshooting
+
+- If you do not see **Developer**, check your plan and account role.
+- If key creation is blocked in Team Enterprise, ask a team admin to grant the required permission.
+- If a key is lost, generate a new one; the original cannot be displayed again.

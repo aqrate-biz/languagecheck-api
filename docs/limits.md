@@ -1,21 +1,36 @@
 # Limits
 
-API limits help protect service stability and ensure fair usage across tenants.
+Rate limits protect platform stability and ensure fair usage.
 
-Exact quotas may vary by plan, environment, or commercial agreement.
+Unless otherwise agreed, limits are enforced per API key.
 
-## Limit Categories
+## Endpoint Rate Limits
 
-- Request rate limits
-- Payload size limits
-- Concurrency limits
-- Retention or history limits for related resources
+| Endpoint  |     Sustained limit |        Burst limit |
+| --------- | ------------------: | -----------------: |
+| `/check`  | 200 requests/minute | 20 requests/second |
+| `/status` |   5 requests/minute |   1 request/second |
 
-## Best Practices
+Both limits apply: a request can be rejected if either the per-minute or per-second threshold is exceeded.
 
-- Implement exponential backoff for retryable failures.
-- Throttle burst traffic on the client side.
-- Split very large workloads into smaller batches.
-- Monitor error responses associated with quota exhaustion.
+## When You Hit a Limit
 
-If you need higher throughput, contact support with your expected traffic profile and workload pattern.
+If your client exceeds a limit, the API returns a rate-limit error (typically HTTP 429).
+
+Recommended client behavior:
+
+- Retry with exponential backoff and jitter.
+- Reduce concurrency and request bursts.
+- Respect `Retry-After` when present.
+
+## Implementation Guidance
+
+- Implement client-side throttling for both per-second and per-minute windows.
+- Keep `/status` polling minimal; avoid aggressive health-check loops.
+- Queue `/check` traffic and drain at a controlled rate.
+- Use separate API keys per environment to isolate traffic patterns.
+- Monitor rate-limit responses and alert on repeated throttling.
+
+## Need Higher Throughput?
+
+Contact support with your expected request profile (average RPM, peak RPS, and use case).
