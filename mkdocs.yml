@@ -1,4 +1,4 @@
-site_name: LanguageCheck developer portal
+site_name: LanguageCheck Developer Portal
 site_author: LanguageCheck.ai
 site_description: Documentation for using the LanguageCheck API
 site_url: https://developers.languagecheck.ai
@@ -44,9 +44,18 @@ extra:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
   - Authentication: authentication.md
   - API Reference: api-reference.md
+  - Developer Tools:
+      - API Keys: api-keys.md
+      - Webhooks: webhooks.md
+      - SDKs: sdks.md
+      - Usage: usage.md
+      - Limits: limits.md
+  - Resources:
+      - Change Log: changelog.md
+      - Status: status.md
+      - Support: support.md
 
 markdown_extensions:
   - admonition # box note/warning/tip
