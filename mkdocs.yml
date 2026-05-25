@@ -28,15 +28,9 @@ theme:
 
 plugins:
   - search # ricerca integrata
-  - swagger-ui-tag:
-      # Opzioni supportate dal plugin (compatibili con --strict)
+  - redoc-tag:
       background: "#f5f7fb"
-      docExpansion: none
-      syntaxHighlightTheme: monokai
-      tryItOutEnabled: true
-      filter: true
-      dark_scheme_name: slate
-      validatorUrl: none
+      height: 120vh
 
 extra:
   version:
