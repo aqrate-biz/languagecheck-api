@@ -52,6 +52,18 @@
       height: calc(100vh - 48px);  /* 48px = altezza header Material */
     }
 
+    /* Stoplight: forza dimensione corretta delle icone nel menu/toolbar.
+       Alcuni stili globali del tema possono gonfiare gli SVG. */
+    elements-api svg.sl-icon {
+      width: 1em !important;
+      height: 1em !important;
+      min-width: 1em;
+      min-height: 1em;
+      max-width: 1em;
+      max-height: 1em;
+      vertical-align: middle;
+    }
+
     /* Nasconde il TOC laterale di Material (Elements ha il suo) */
     .md-sidebar--secondary {
       display: none;
