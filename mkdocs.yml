@@ -31,9 +31,6 @@ theme:
 
 plugins:
   - search # ricerca integrata
-  - redoc-tag:
-      background: "#f5f7fb"
-      height: 120vh
 
 extra:
   version:
