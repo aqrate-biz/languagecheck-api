@@ -8,7 +8,7 @@ template: api-reference.html
 api_spec_url: /openapi.yaml
 
 # Layout di Elements: sidebar | stacked | responsive
-api_layout: stacked
+api_layout: responsive
 
 # Router: hash | memory | history
 # "hash" è il più compatibile (funziona anche con file://)
