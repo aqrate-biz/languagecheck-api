@@ -240,9 +240,10 @@ definitions:
   Language:
     type: string
     enum:
-      &LANGUAGES [
+      [
         af-ZA,
         am-ET,
+        ar-AE,
         ar-BH,
         ar-DZ,
         ar-EG,
@@ -276,8 +277,8 @@ definitions:
         el-GR,
         en-AU,
         en-CA,
-        en-IN,
         en-GB,
+        en-IN,
         en-NZ,
         en-US,
         es-AR,
@@ -294,8 +295,8 @@ definitions:
         fi-FI,
         fil-PH,
         fr-CA,
-        fr-FR,
         fr-CH,
+        fr-FR,
         fy-NL,
         ga-IE,
         gd-GB,
@@ -335,9 +336,10 @@ definitions:
         mt-MT,
         nb-NO,
         ne-NP,
-        nl-NL,
         nl-BE,
+        nl-NL,
         nn-NO,
+        no-NO,
         or-IN,
         pa-Arab-PK,
         pa-IN,
@@ -367,6 +369,7 @@ definitions:
         tg-Cyrl-TJ,
         th-TH,
         tk-TM,
+        tl-PH,
         tn-BW,
         tr-TR,
         tt-RU,
@@ -385,10 +388,9 @@ definitions:
         zh-SG,
         zh-TW,
         zu-ZA,
-        ar-AE,
-        tl-PH,
-        no-NO,
       ]
+    example: en-US
+    description: ISO language code (e.g., en-US, it-IT)
 
 # ---------------------------------------------------------------------------
 # Paths
