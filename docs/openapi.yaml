@@ -181,6 +181,7 @@ definitions:
       - minorErrorsExplanation
       - majorErrorsExplanation
       - fluencyIssuesExplanation
+      - words
     properties:
       evaluation:
         type: string
@@ -214,6 +215,10 @@ definitions:
         type: string
         description: Explanation of fluency issues
         example: "Some sentences are awkwardly phrased"
+      words:
+        type: integer
+        description: Number of words in the source text
+        example: 10
   StatusResponse:
     allOf:
       - $ref: "#/definitions/ApiResponse"
