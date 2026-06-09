@@ -469,12 +469,18 @@ paths:
                 allOf:
                   - $ref: "#/definitions/Language"
                 description: Language of the source text
-                example: "en"
+                example: "en-US"
               targetLanguage:
                 allOf:
                   - $ref: "#/definitions/Language"
                 description: Language of the target text
-                example: "it"
+                example: "it-IT"
+              responseLanguage:
+                allOf:
+                  - $ref: "#/definitions/Language"
+                description: Language of the response
+                example: "en-US"
+                default: "en-US"
       consumes:
         - application/json
       produces:
