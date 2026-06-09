@@ -18,20 +18,20 @@ info:
 # Server & Configurazione Endpoint GCP
 # ---------------------------------------------------------------------------
 
-host: apitest.languagecheck.it
+host: api.languagecheck.ai
 basePath: /v2
 schemes:
   - https
 # Configurazione necessaria per associare il dominio personalizzato/gateway su GCP
 x-google-endpoints:
-  - name: apitest.languagecheck.it
+  - name: api.languagecheck.ai
     allowCors: true
 
 # ---------------------------------------------------------------------------
 # Backend Predefinito (Spostato a livello globale per evitare ripetizioni)
 # ---------------------------------------------------------------------------
 x-google-backend:
-  address: https://languagecheck-test.ey.r.appspot.com
+  address: https://languagecheck-prod.ey.r.appspot.com
   path_translation: APPEND_PATH_TO_ADDRESS
   deadline: 600.0
   disable_auth: true
@@ -52,161 +52,6 @@ x-google-management:
         unit: "1/min/{project}"
         values:
           STANDARD: 2000
-
-# ---------------------------------------------------------------------------
-# Paths
-# ---------------------------------------------------------------------------
-paths:
-  /status:
-    get:
-      operationId: getStatus
-      summary: Get service status
-      description: Returns the current status of the service and the health of its components.
-      tags:
-        - Status
-      x-google-quota:
-        metricCosts:
-          "requests": 1
-      parameters: []
-      produces:
-        - application/json
-      responses:
-        200:
-          description: Service operational
-          schema:
-            $ref: "#/definitions/StatusResponse"
-          examples:
-            application/json:
-              success: true
-              status: 200
-              message: "Service operational"
-              metadata:
-                timestamp: "2024-05-09T12:00:00Z"
-                requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
-                version: "2.0.1"
-              data:
-                status: "ok"
-                version: "2.0.0"
-                timestamp: "2024-05-09T12:00:00Z"
-              errors: null
-        429:
-          $ref: "#/responses/TooManyRequestsError"
-        500:
-          $ref: "#/responses/InternalServerError"
-        503:
-          $ref: "#/responses/ServiceUnavailableError"
-  /check:
-    post:
-      operationId: postCheck
-      summary: Check bilingual segment for translation issues
-      description: Analyze the provided text and return detected issues and suggestions.
-      tags:
-        - Check
-      x-google-quota:
-        metricCosts:
-          "requests": 1
-      parameters:
-        - in: body
-          name: body
-          description: Input data for check
-          required: true
-          schema:
-            type: object
-            required:
-              - source
-              - target
-              - sourceLanguage
-              - targetLanguage
-            properties:
-              source:
-                type: string
-                description: Source text to be checked
-                example: "This is an example sentence with a error."
-              target:
-                type: string
-                description: Target text to be checked
-                example: "Questo è un esempio di frase con un errore."
-              sourceLanguage:
-                type: string
-                description: Language of the source text
-                example: "en"
-              targetLanguage:
-                type: string
-                description: Language of the target text
-                example: "it"
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      responses:
-        201:
-          description: Check completed successfully
-          schema:
-            $ref: "#/definitions/CheckResponse"
-        400:
-          description: Bad request (e.g., missing or invalid 'text' field)
-          schema:
-            $ref: "#/definitions/ErrorApiResponse"
-        401:
-          $ref: "#/responses/UnauthorizedError"
-        402:
-          $ref: "#/responses/WordsQuotaExceededError"
-        403:
-          $ref: "#/responses/ForbiddenError"
-        404:
-          $ref: "#/responses/NotFoundError"
-        405:
-          $ref: "#/responses/MethodNotAllowedError"
-        408:
-          $ref: "#/responses/RequestTimeoutError"
-        429:
-          $ref: "#/responses/TooManyRequestsError"
-        500:
-          $ref: "#/responses/InternalServerError"
-        503:
-          $ref: "#/responses/ServiceUnavailableError"
-
-# ---------------------------------------------------------------------------
-# Definitions, Responses, Security Definitions
-# ---------------------------------------------------------------------------
-
-responses:
-  UnauthorizedError:
-    description: Missing or invalid API key
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  WordsQuotaExceededError:
-    description: Words quota exceeded
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  ForbiddenError:
-    description: Insufficient permissions
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  NotFoundError:
-    description: Resource not found
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  MethodNotAllowedError:
-    description: HTTP method not allowed
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  RequestTimeoutError:
-    description: Request timed out
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  TooManyRequestsError:
-    description: Rate limit exceeded
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  InternalServerError:
-    description: Internal server error
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
-  ServiceUnavailableError:
-    description: Service unavailable
-    schema:
-      $ref: "#/definitions/ErrorApiResponse"
 
 definitions:
   ApiResponse:
@@ -392,3 +237,312 @@ definitions:
             type: string
             description: Always null in case of error
             example: null
+  Language:
+    type: string
+    enum:
+      &LANGUAGES [
+        af-ZA,
+        am-ET,
+        ar-BH,
+        ar-DZ,
+        ar-EG,
+        ar-IQ,
+        ar-KW,
+        ar-LB,
+        ar-LY,
+        ar-MA,
+        ar-QA,
+        ar-SA,
+        ar-TN,
+        as-IN,
+        az-Cyrl-AZ,
+        az-Latn-AZ,
+        be-BY,
+        bg-BG,
+        bn-BD,
+        bn-IN,
+        br-FR,
+        bs-Cyrl-BA,
+        bs-Latn-BA,
+        ca-ES,
+        chr-Cher-US,
+        cnr-Latn-ME,
+        cs-CZ,
+        cy-GB,
+        da-DK,
+        de-AT,
+        de-CH,
+        de-DE,
+        el-GR,
+        en-AU,
+        en-CA,
+        en-IN,
+        en-GB,
+        en-NZ,
+        en-US,
+        es-AR,
+        es-CL,
+        es-CO,
+        es-ES,
+        es-MX,
+        es-PE,
+        es-UY,
+        et-EE,
+        eu-ES,
+        fa-IR,
+        ff-Latn-SN,
+        fi-FI,
+        fil-PH,
+        fr-CA,
+        fr-FR,
+        fr-CH,
+        fy-NL,
+        ga-IE,
+        gd-GB,
+        gl-ES,
+        gu-IN,
+        ha-Latn-NG,
+        haw-US,
+        he-IL,
+        hi-IN,
+        hr-HR,
+        hu-HU,
+        hy-AM,
+        id-ID,
+        ig-NG,
+        is-IS,
+        it-IT,
+        ja-JP,
+        ka-GE,
+        kk-KZ,
+        kl-GL,
+        km-KH,
+        kn-IN,
+        ko-KR,
+        ku-Arab-IQ,
+        ky-KG,
+        lb-LU,
+        lo-LA,
+        lt-LT,
+        lv-LV,
+        mi-NZ,
+        mk-MK,
+        ml-IN,
+        mn-MN,
+        mr-IN,
+        ms-BN,
+        ms-MY,
+        mt-MT,
+        nb-NO,
+        ne-NP,
+        nl-NL,
+        nl-BE,
+        nn-NO,
+        or-IN,
+        pa-Arab-PK,
+        pa-IN,
+        pl-PL,
+        prs-AF,
+        ps-AF,
+        pt-BR,
+        pt-PT,
+        quz-BO,
+        quz-EC,
+        quz-PE,
+        ro-RO,
+        ru-RU,
+        rw-RW,
+        sa-IN,
+        si-LK,
+        sk-SK,
+        sl-SI,
+        sq-AL,
+        sr-Cyrl-BA,
+        sr-Latn-BA,
+        sv-SE,
+        sw-KE,
+        ta-IN,
+        ta-LK,
+        te-IN,
+        tg-Cyrl-TJ,
+        th-TH,
+        tk-TM,
+        tn-BW,
+        tr-TR,
+        tt-RU,
+        tzm-Latn-DZ,
+        uk-UA,
+        ur-PK,
+        uz-Cyrl-UZ,
+        uz-Latn-UZ,
+        vi-VN,
+        wo-SN,
+        xh-ZA,
+        yo-NG,
+        zh-CN,
+        zh-HK,
+        zh-MO,
+        zh-SG,
+        zh-TW,
+        zu-ZA,
+        ar-AE,
+        tl-PH,
+        no-NO,
+      ]
+
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+paths:
+  /status:
+    get:
+      operationId: getStatus
+      summary: Get service status
+      description: Returns the current status of the service and the health of its components.
+      tags:
+        - Status
+      x-google-quota:
+        metricCosts:
+          "requests": 1
+      parameters: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Service operational
+          schema:
+            $ref: "#/definitions/StatusResponse"
+          examples:
+            application/json:
+              success: true
+              status: 200
+              message: "Service operational"
+              metadata:
+                timestamp: "2024-05-09T12:00:00Z"
+                requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
+                version: "2.0.1"
+              data:
+                status: "ok"
+                version: "2.0.0"
+                timestamp: "2024-05-09T12:00:00Z"
+              errors: null
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+  /check:
+    post:
+      operationId: postCheck
+      summary: Check bilingual segment for translation issues
+      description: Analyze the provided text and return detected issues and suggestions.
+      tags:
+        - Check
+      x-google-quota:
+        metricCosts:
+          "requests": 1
+      parameters:
+        - in: body
+          name: body
+          description: Input data for check
+          required: true
+          schema:
+            type: object
+            required:
+              - source
+              - target
+              - sourceLanguage
+              - targetLanguage
+            properties:
+              source:
+                type: string
+                description: Source text to be checked
+                example: "This is an example sentence with a error."
+              target:
+                type: string
+                description: Target text to be checked
+                example: "Questo è un esempio di frase con un errore."
+              sourceLanguage:
+                allOf:
+                  - $ref: "#/definitions/Language"
+                description: Language of the source text
+                example: "en"
+              targetLanguage:
+                allOf:
+                  - $ref: "#/definitions/Language"
+                description: Language of the target text
+                example: "it"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        201:
+          description: Check completed successfully
+          schema:
+            $ref: "#/definitions/CheckResponse"
+        400:
+          description: Bad request (e.g., missing or invalid 'text' field)
+          schema:
+            $ref: "#/definitions/ErrorApiResponse"
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        402:
+          $ref: "#/responses/WordsQuotaExceededError"
+        403:
+          $ref: "#/responses/ForbiddenError"
+        404:
+          $ref: "#/responses/NotFoundError"
+        405:
+          $ref: "#/responses/MethodNotAllowedError"
+        408:
+          $ref: "#/responses/RequestTimeoutError"
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+
+# ---------------------------------------------------------------------------
+# Definitions, Responses, Security Definitions
+# ---------------------------------------------------------------------------
+
+responses:
+  UnauthorizedError:
+    description: Missing or invalid API key
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  WordsQuotaExceededError:
+    description: Words quota exceeded
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  ForbiddenError:
+    description: Insufficient permissions
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  NotFoundError:
+    description: Resource not found
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  MethodNotAllowedError:
+    description: HTTP method not allowed
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  RequestTimeoutError:
+    description: Request timed out
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  TooManyRequestsError:
+    description: Rate limit exceeded
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  InternalServerError:
+    description: Internal server error
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
+  ServiceUnavailableError:
+    description: Service unavailable
+    schema:
+      $ref: "#/definitions/ErrorApiResponse"
