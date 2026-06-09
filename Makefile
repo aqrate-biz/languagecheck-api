@@ -34,8 +34,5 @@ render-firebase-overrides:
 	@if [ -f .env.local ]; then set -a; . ./.env.local; set +a; fi; \
 	$(PYTHON) scripts/render_firebase_overrides.py
 
-sync-openapi:
-	cp openapi.yaml docs/openapi.yaml
-
 clean:
 	rm -rf site
