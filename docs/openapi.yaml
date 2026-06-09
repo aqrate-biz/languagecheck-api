@@ -7,7 +7,7 @@ info:
   title: LanguageCheck API
   description: |
     These are the APIs for LanguageCheck (languagecheck.ai), enabling direct access to its services through RESTful calls.
-  version: "2.0.0"
+  version: "2.0.1"
   termsOfService: https://languagecheck.ai/terms
   contact:
     name: LanguageCheck crew
@@ -54,12 +54,6 @@ x-google-management:
           STANDARD: 2000
 
 # ---------------------------------------------------------------------------
-# Global security: API key required on all endpoints
-# ---------------------------------------------------------------------------
-security:
-  - ApiKeyAuth: []
-
-# ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
 paths:
@@ -70,7 +64,6 @@ paths:
       description: Returns the current status of the service and the health of its components.
       tags:
         - Status
-      security: []
       x-google-quota:
         metricCosts:
           "requests": 1
@@ -90,7 +83,7 @@ paths:
               metadata:
                 timestamp: "2024-05-09T12:00:00Z"
                 requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
-                version: "2.0.0"
+                version: "2.0.1"
               data:
                 status: "ok"
                 version: "2.0.0"
@@ -109,8 +102,6 @@ paths:
       description: Analyze the provided text and return detected issues and suggestions.
       tags:
         - Check
-      security:
-        - ApiKeyAuth: []
       x-google-quota:
         metricCosts:
           "requests": 1
@@ -178,11 +169,6 @@ paths:
 # ---------------------------------------------------------------------------
 # Definitions, Responses, Security Definitions
 # ---------------------------------------------------------------------------
-securityDefinitions:
-  ApiKeyAuth:
-    type: apiKey
-    in: header
-    name: x-api-key
 
 responses:
   UnauthorizedError:
@@ -256,6 +242,10 @@ definitions:
       - timestamp
       - requestId
       - version
+      - requestReceivedAt
+      - processingTimeMs
+      - user
+      - apiKey
     properties:
       timestamp:
         type: string
@@ -269,7 +259,24 @@ definitions:
       version:
         type: string
         description: API version
-        example: "2.0.0"
+        example: "v2"
+      requestReceivedAt:
+        type: string
+        format: date-time
+        description: UTC timestamp when the request was received
+        example: "2024-05-09T12:00:00Z"
+      processingTimeMs:
+        type: integer
+        description: Time taken to process the request in milliseconds
+        example: 123
+      user:
+        type: string
+        description: User identifier (e.g., email) associated with the request (if available)
+        example: "user@example.com"
+      apiKey:
+        type: string
+        description: API key used for the request (if available)
+        example: "api_key_123"
   ApiError:
     type: object
     required:
