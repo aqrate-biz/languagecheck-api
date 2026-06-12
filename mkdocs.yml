@@ -54,9 +54,9 @@ nav:
       - Reference: api-reference.md
   - Developer Tools:
       - API Keys: api-keys.md
-      - Webhooks: webhooks.md
-      - SDKs: sdks.md
-      - Usage: usage.md
+      #- Webhooks: webhooks.md
+      #- SDKs: sdks.md
+      #- Usage: usage.md
       - Limits: limits.md
   - Resources:
       - Change Log: changelog.md

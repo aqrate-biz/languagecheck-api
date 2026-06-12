@@ -2,7 +2,7 @@
 
 Rate limits protect platform stability and ensure fair usage.
 
-Unless otherwise agreed, limits are enforced per API key.
+Unless otherwise agreed, limits are enforced per account linked to the API key.
 
 ## Endpoint Rate Limits
 
@@ -28,7 +28,6 @@ Recommended client behavior:
 - Implement client-side throttling for both per-second and per-minute windows.
 - Keep `/status` polling minimal; avoid aggressive health-check loops.
 - Queue `/check` traffic and drain at a controlled rate.
-- Use separate API keys per environment to isolate traffic patterns.
 - Monitor rate-limit responses and alert on repeated throttling.
 
 ## Need Higher Throughput?

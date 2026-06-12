@@ -1,7 +1,7 @@
 # LanguageCheck API
 
-**Version:** 2.0.1  
-**Base URL:** `https://apitest.languagecheck.it/v2`
+**Version:** 2.0.0
+**Base URL:** `https://api.languagecheck.ai/v2`
 
 ---
 

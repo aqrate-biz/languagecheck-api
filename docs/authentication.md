@@ -10,7 +10,7 @@ Send a valid API key in the `X-Api-Key` header for every API request.
 X-Api-Key: YOUR_API_KEY
 ```
 
-- `YOUR_API_KEY` must be a valid, active key generated from the Developer page.
+- `YOUR_API_KEY` must be a valid, active key generated from the Developers page.
 - Revoked, invalid, or malformed keys are rejected.
 
 ## cURL Example

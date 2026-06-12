@@ -6,7 +6,7 @@ This page tracks notable changes to the LanguageCheck API and documentation.
 
 - No changes yet.
 
-## 2.0.0 - 2026-05-25
+## 2.0.0 - 2026-06-19
 
 First public release of the LanguageCheck API.
 

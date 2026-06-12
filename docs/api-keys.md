@@ -15,7 +15,7 @@ In Team Enterprise, only users with the proper team permission can create team-w
 
 1. Log in to LanguageCheck.
 2. Open the user menu.
-3. Select **Developer**.
+3. Select **Developers**.
 4. Open the API Keys page.
 5. Click **Generate API Key**.
 
@@ -42,6 +42,5 @@ In Team Enterprise, only users with the proper team permission can create team-w
 
 ## Troubleshooting
 
-- If you do not see **Developer**, check your plan and account role.
-- If key creation is blocked in Team Enterprise, ask a team admin to grant the required permission.
+- If you do not see **Developers** page, check your plan and account role.
 - If a key is lost, generate a new one; the original cannot be displayed again.

@@ -7,7 +7,7 @@ info:
   title: LanguageCheck API
   description: |
     These are the APIs for LanguageCheck (languagecheck.ai), enabling direct access to its services through RESTful calls.
-  version: "2.0.1"
+  version: "2.0.0"
   termsOfService: https://languagecheck.ai/terms
   contact:
     name: LanguageCheck crew
@@ -22,36 +22,18 @@ host: api.languagecheck.ai
 basePath: /v2
 schemes:
   - https
-# Configurazione necessaria per associare il dominio personalizzato/gateway su GCP
-x-google-endpoints:
-  - name: api.languagecheck.ai
-    allowCors: true
 
 # ---------------------------------------------------------------------------
-# Backend Predefinito (Spostato a livello globale per evitare ripetizioni)
+# Global security: API key required on all endpoints
 # ---------------------------------------------------------------------------
-x-google-backend:
-  address: https://languagecheck-prod.ey.r.appspot.com
-  path_translation: APPEND_PATH_TO_ADDRESS
-  deadline: 600.0
-  disable_auth: true
+security:
+  - ApiKeyAuth: []
 
-# ---------------------------------------------------------------------------
-# 1. CONFIGURAZIONE RATE LIMITING (METRICHE E QUOTE GLOBALI)
-# ---------------------------------------------------------------------------
-x-google-management:
-  metrics:
-    - name: "requests"
-      displayName: "Requests"
-      valueType: INT64
-      metricKind: DELTA
-  quota:
-    limits:
-      - name: "requests-limit"
-        metric: "requests"
-        unit: "1/min/{project}"
-        values:
-          STANDARD: 2000
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-Key
 
 definitions:
   ApiResponse:
@@ -411,6 +393,8 @@ paths:
       x-google-quota:
         metricCosts:
           "requests": 1
+      security:
+        - ApiKeyAuth: []
       parameters: []
       produces:
         - application/json
@@ -449,6 +433,8 @@ paths:
       x-google-quota:
         metricCosts:
           "requests": 1
+      security:
+        - ApiKeyAuth: []
       parameters:
         - in: body
           name: body

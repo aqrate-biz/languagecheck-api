@@ -2,3 +2,5 @@ site
 .vscode
 .env.local
 firebase-auth-overrides.js
+sdks/generated-sources
+sdks/node_modules
