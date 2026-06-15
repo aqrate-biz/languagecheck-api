@@ -21,6 +21,14 @@ The response indicates whether the platform and the AI service are fully operati
 
 ---
 
+### GET /wallet — Remaining Words Balance
+
+This endpoint returns the current number of words still available for the authenticated user. It is useful for checking quota before sending translation jobs and for surfacing remaining capacity in your application.
+
+The response includes the remaining word count and the timestamp of the last wallet update, which can be used to keep UI indicators or internal monitoring in sync.
+
+---
+
 ### POST /check — Translation Quality Evaluation
 
 This is the primary endpoint of the API. It accepts a bilingual segment — a source text and its corresponding translation — along with the respective language codes, and returns a structured evaluation of the translation quality.

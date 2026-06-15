@@ -7,7 +7,7 @@ info:
   title: LanguageCheck API
   description: |
     These are the APIs for LanguageCheck (languagecheck.ai), enabling direct access to its services through RESTful calls.
-  version: "2.0.0"
+  version: "2.1.0"
   termsOfService: https://languagecheck.ai/terms
   contact:
     name: LanguageCheck crew
@@ -201,6 +201,21 @@ definitions:
         type: integer
         description: Number of words in the source text
         example: 10
+  WalletInfo:
+    type: object
+    required:
+      - words
+      - lastUpdated
+    properties:
+      words:
+        type: integer
+        description: Number of words remaining in the user's wallet
+        example: 1500
+      lastUpdated:
+        type: string
+        format: date-time
+        description: UTC timestamp of the last wallet update
+        example: "2024-05-09T12:00:00Z"
   StatusResponse:
     allOf:
       - $ref: "#/definitions/ApiResponse"
@@ -215,6 +230,13 @@ definitions:
         properties:
           data:
             $ref: "#/definitions/CheckResult"
+  WalletResponse:
+    allOf:
+      - $ref: "#/definitions/ApiResponse"
+      - type: object
+        properties:
+          data:
+            $ref: "#/definitions/WalletInfo"
   ErrorApiResponse:
     allOf:
       - $ref: "#/definitions/ApiResponse"
@@ -390,9 +412,6 @@ paths:
       description: Returns the current status of the service and the health of its components.
       tags:
         - Status
-      x-google-quota:
-        metricCosts:
-          "requests": 1
       security:
         - ApiKeyAuth: []
       parameters: []
@@ -430,9 +449,6 @@ paths:
       description: Analyze the provided text and return detected issues and suggestions.
       tags:
         - Check
-      x-google-quota:
-        metricCosts:
-          "requests": 1
       security:
         - ApiKeyAuth: []
       parameters:
@@ -497,6 +513,35 @@ paths:
           $ref: "#/responses/MethodNotAllowedError"
         408:
           $ref: "#/responses/RequestTimeoutError"
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+  /wallet:
+    get:
+      operationId: getWallet
+      summary: Get wallet information
+      description: Returns the current status of the user's wallet, including balance and transaction history.
+      tags:
+        - Wallet
+      security:
+        - ApiKeyAuth: []
+      parameters: []
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Wallet information retrieved successfully
+          schema:
+            $ref: "#/definitions/WalletResponse"
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        403:
+          $ref: "#/responses/ForbiddenError"
+        404:
+          $ref: "#/responses/NotFoundError"
         429:
           $ref: "#/responses/TooManyRequestsError"
         500:

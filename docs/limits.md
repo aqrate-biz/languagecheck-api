@@ -10,6 +10,7 @@ Unless otherwise agreed, limits are enforced per account linked to the API key.
 | --------- | ------------------: | -----------------: |
 | `/check`  | 200 requests/minute | 20 requests/second |
 | `/status` |   5 requests/minute |   1 request/second |
+| `/wallet` |   5 requests/minute |   1 request/second |
 
 Both limits apply: a request can be rejected if either the per-minute or per-second threshold is exceeded.
 
@@ -23,12 +24,17 @@ Recommended client behavior:
 - Reduce concurrency and request bursts.
 - Respect `Retry-After` when present.
 
+## Word Balance and Quota
+
+Use `/wallet` to inspect the number of words still available for the authenticated user. This helps you display remaining quota, pause or defer `/check` requests when the balance is low, and avoid unexpected failures on exhausted usage plans.
+
 ## Implementation Guidance
 
 - Implement client-side throttling for both per-second and per-minute windows.
 - Keep `/status` polling minimal; avoid aggressive health-check loops.
 - Queue `/check` traffic and drain at a controlled rate.
 - Monitor rate-limit responses and alert on repeated throttling.
+- Call `/wallet` sparingly for pre-flight checks rather than in tight polling loops.
 
 ## Need Higher Throughput?
 
