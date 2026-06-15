@@ -63,6 +63,7 @@ definitions:
         description: List of errors (null on success)
         items:
           $ref: "#/definitions/ApiError"
+        example: null
   ResponseMetadata:
     type: object
     required:
