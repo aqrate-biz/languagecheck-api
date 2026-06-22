@@ -46,7 +46,7 @@ extra_javascript:
   - assets/javascripts/firebase-auth-overrides.js
   - https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js
   - https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js
-  - assets/javascripts/firebase-auth.js
+  # - assets/javascripts/firebase-auth.js
 
 nav:
   - Home: index.md

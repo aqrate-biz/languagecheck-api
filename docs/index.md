@@ -15,6 +15,6 @@ This section provides a quick introduction to the platform and the basic integra
 1. Generate your API key
 2. Authenticate your requests
 3. Send a bilingual segment to the validation endpoint
-4. Process the returned quality-check results in your system
+4. Process the returned QA results in your system
 
 The LanguageCheck.ai APIs are designed to be simple to integrate, lightweight, and suitable for both real-time and batch-processing environments.

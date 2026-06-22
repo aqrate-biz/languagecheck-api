@@ -24,7 +24,7 @@ In Team Enterprise, only users with the proper team permission can create team-w
 - The full API key is shown only once, at creation time.
 - You can create multiple keys.
 - You can revoke keys you no longer need.
-- If you are a Team user with permission, you can create keys that work for the entire team.
+- If you are a Team Enterprise user with permission, you can create keys that work for the entire team.
 
 ## Recommended Usage
 
