@@ -6,11 +6,11 @@ Unless otherwise agreed, limits are enforced per account linked to the API key.
 
 ## Endpoint Rate Limits
 
-| Endpoint  |     Sustained limit |        Burst limit |
-| --------- | ------------------: | -----------------: |
-| `/check`  | 200 requests/minute | 20 requests/second |
-| `/status` |   5 requests/minute |   1 request/second |
-| `/wallet` |   5 requests/minute |   1 request/second |
+| Endpoint  |     Sustained limit |       Burst limit |
+| --------- | ------------------: | ----------------: |
+| `/check`  | 100 requests/minute | 5 requests/second |
+| `/status` |   5 requests/minute |  1 request/second |
+| `/wallet` |   5 requests/minute |  1 request/second |
 
 Both limits apply: a request can be rejected if either the per-minute or per-second threshold is exceeded.
 
