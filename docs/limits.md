@@ -38,4 +38,4 @@ Use `/wallet` to inspect the number of words still available for the authenticat
 
 ## Need Higher Throughput?
 
-Contact support with your expected request profile (average RPM, peak RPS, and use case).
+Contact support at crew@languagecheck.ai with your expected request profile (average RPM, peak RPS, and use case).

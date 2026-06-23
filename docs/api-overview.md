@@ -35,6 +35,6 @@ This is the primary endpoint of the API. It accepts a bilingual segment — a so
 
 The evaluation covers three dimensions: **major errors** (issues that distort meaning or render the translation unsuitable), **minor errors** (inaccuracies or stylistic imprecisions that do not significantly affect usability), and **fluency issues** (problems with the naturalness and readability of the target text, independently of its accuracy). Each dimension is accompanied by a textual explanation when issues are detected.
 
-The response also includes an **overall verdict** for the segment and an **ambiguity flag**, which signals that the model could not assess the segment with sufficient confidence — typically due to very short or highly technical content — and that human review may be warranted.
+The response also includes an **overall verdict** for the segment and an **ambiguity flag**, which signals that the model could not assess the segment with sufficient confidence and that human review may be needed.
 
 Explanations can be returned in a configurable language, making it straightforward to surface QA feedback directly to translators or reviewers in their preferred language.

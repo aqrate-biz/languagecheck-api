@@ -40,10 +40,3 @@ Refer to endpoint-specific responses in the API reference for exact status codes
 ## Related
 
 See the API Keys page for generation, visibility, and revocation rules.
-
-## Documentation Portal Sign-In
-
-The documentation portal supports Firebase sign-in with Google and Email/Password.
-
-This sign-in is for the docs website session only and is independent from API authentication.
-API requests still require a valid `X-Api-Key` header.
