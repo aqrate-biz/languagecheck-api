@@ -202,6 +202,70 @@ definitions:
         type: integer
         description: Number of words in the source text
         example: 10
+  MultiSegmentCheckInput:
+    type: object
+    required:
+      - id
+    properties:
+      id:
+        type: string
+        description: Unique segment identifier within the request
+        example: "segment-1"
+      source:
+        type: string
+        description: Source text to be checked
+        example: "Hello world."
+      target:
+        type: string
+        description: Target text to be checked
+        example: "Ciao mondo."
+  MultiSegmentCheckError:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: integer
+        description: HTTP-compatible error code for the segment
+        example: 400
+      message:
+        type: string
+        description: Human-readable error description
+        example: "Validation error"
+      details:
+        type: array
+        description: Additional error details, such as validation fields and messages
+        items:
+          type: object
+  MultiSegmentCheckItemResult:
+    type: object
+    required:
+      - id
+      - success
+    properties:
+      id:
+        type: string
+        description: Segment identifier supplied in the request
+        example: "segment-1"
+      success:
+        type: boolean
+        description: Whether the segment check completed successfully
+        example: true
+      result:
+        $ref: "#/definitions/CheckResult"
+      error:
+        $ref: "#/definitions/MultiSegmentCheckError"
+  MultiSegmentCheckResult:
+    type: object
+    required:
+      - results
+    properties:
+      results:
+        type: array
+        description: Results in the same order as the input segments
+        items:
+          $ref: "#/definitions/MultiSegmentCheckItemResult"
   WalletInfo:
     type: object
     required:
@@ -231,6 +295,13 @@ definitions:
         properties:
           data:
             $ref: "#/definitions/CheckResult"
+  MultiSegmentCheckResponse:
+    allOf:
+      - $ref: "#/definitions/ApiResponse"
+      - type: object
+        properties:
+          data:
+            $ref: "#/definitions/MultiSegmentCheckResult"
   WalletResponse:
     allOf:
       - $ref: "#/definitions/ApiResponse"
@@ -500,6 +571,135 @@ paths:
             $ref: "#/definitions/CheckResponse"
         400:
           description: Bad request (e.g., missing or invalid 'text' field)
+          schema:
+            $ref: "#/definitions/ErrorApiResponse"
+        401:
+          $ref: "#/responses/UnauthorizedError"
+        402:
+          $ref: "#/responses/WordsQuotaExceededError"
+        403:
+          $ref: "#/responses/ForbiddenError"
+        404:
+          $ref: "#/responses/NotFoundError"
+        405:
+          $ref: "#/responses/MethodNotAllowedError"
+        408:
+          $ref: "#/responses/RequestTimeoutError"
+        429:
+          $ref: "#/responses/TooManyRequestsError"
+        500:
+          $ref: "#/responses/InternalServerError"
+        503:
+          $ref: "#/responses/ServiceUnavailableError"
+  /multisegment-check:
+    post:
+      operationId: postMultisegmentCheck
+      summary: Check multiple bilingual segments for translation issues
+      description: Analyze up to 10 bilingual segments independently and return one result per segment, in input order.
+      tags:
+        - Check
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: body
+          name: body
+          description: Shared languages and segments to check
+          required: true
+          schema:
+            type: object
+            required:
+              - sourceLanguage
+              - targetLanguage
+              - segments
+            example:
+              sourceLanguage: "en-US"
+              targetLanguage: "it-IT"
+              responseLanguage: "en-US"
+              segments:
+                - id: "segment-1"
+                  source: "Hello world."
+                  target: "Ciao mondo."
+                - id: "segment-2"
+                  source: "Good morning."
+                  target: "Buongiorno."
+            properties:
+              sourceLanguage:
+                allOf:
+                  - $ref: "#/definitions/Language"
+                description: Language of the source texts
+                example: "en-US"
+              targetLanguage:
+                allOf:
+                  - $ref: "#/definitions/Language"
+                description: Language of the target texts
+                example: "it-IT"
+              responseLanguage:
+                allOf:
+                  - $ref: "#/definitions/Language"
+                description: Language of the responses
+                example: "en-US"
+                default: "en-US"
+              model:
+                type: string
+                description: Optional language check model
+              segments:
+                type: array
+                description: Bilingual segments to check; IDs must be unique within the request
+                minItems: 1
+                maxItems: 10
+                items:
+                  $ref: "#/definitions/MultiSegmentCheckInput"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        200:
+          description: Segment checks completed, including any per-segment errors
+          schema:
+            $ref: "#/definitions/MultiSegmentCheckResponse"
+          examples:
+            application/json:
+              success: true
+              status: 200
+              message: "OK"
+              metadata:
+                timestamp: "2026-09-01T09:00:00Z"
+                requestId: "a3f92c1d-8e74-4b2a-bc01-f3d9e5a71c88"
+                version: "v2"
+                requestReceivedAt: "2026-09-01T08:59:59Z"
+                processingTimeMs: 1234
+              data:
+                results:
+                  - id: "segment-1"
+                    success: true
+                    result:
+                      evaluation: "FLAWLESS"
+                      isAmbiguous: false
+                      minorErrors: false
+                      majorErrors: false
+                      fluencyIssues: false
+                      minorErrorsExplanation: ""
+                      majorErrorsExplanation: ""
+                      fluencyIssuesExplanation: ""
+                      words: 2
+                    error: null
+                  - id: "segment-2"
+                    success: true
+                    result:
+                      evaluation: "FLAWLESS"
+                      isAmbiguous: false
+                      minorErrors: false
+                      majorErrors: false
+                      fluencyIssues: false
+                      minorErrorsExplanation: ""
+                      majorErrorsExplanation: ""
+                      fluencyIssuesExplanation: ""
+                      words: 2
+                    error: null
+              error: null
+        400:
+          description: Invalid shared fields or request structure
           schema:
             $ref: "#/definitions/ErrorApiResponse"
         401:
