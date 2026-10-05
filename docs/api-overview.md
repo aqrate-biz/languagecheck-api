@@ -1,6 +1,6 @@
 # LanguageCheck API
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Base URL:** `https://api.languagecheck.ai/v2`
 
 ---
@@ -38,3 +38,13 @@ The evaluation covers three dimensions: **major errors** (issues that distort me
 The response also includes an **overall verdict** for the segment and an **ambiguity flag**, which signals that the model could not assess the segment with sufficient confidence and that human review may be needed.
 
 Explanations can be returned in a configurable language, making it straightforward to surface QA feedback directly to translators or reviewers in their preferred language.
+
+---
+
+### POST /multisegment-check — Batch Translation Quality Evaluation
+
+This endpoint evaluates multiple bilingual segments in a single request. It accepts between 1 and 10 segments, with shared source, target, and response languages. Each segment must have a unique `id` and contains its own source text and translation.
+
+Segments are evaluated independently. The response contains one item per segment, in the same order as the request, and uses the supplied `id` to correlate each result with its input. A successful item contains the same structured quality evaluation returned by `POST /check`. If an individual segment is invalid or cannot be processed, only that item contains an error; the remaining valid segments can still complete successfully.
+
+Request-level validation errors, such as missing shared languages, duplicate segment IDs, or more than 10 segments, reject the entire request. Before processing begins, the endpoint also checks that the wallet has enough words for all valid segments combined.
