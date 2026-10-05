@@ -4,7 +4,7 @@ This page tracks notable changes to the LanguageCheck API and documentation.
 
 ## Unreleased
 
-- No changes yet.
+- Added `es-US` (Spanish, United States) to the supported language codes.
 
 ## 2.0.0 - 2026-06-19
 
