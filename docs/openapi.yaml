@@ -261,6 +261,235 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "503":
           $ref: "#/components/responses/ServiceUnavailableError"
+  /file-check:
+    post:
+      operationId: postFileCheck
+      summary: Start a language check from an uploaded file
+      description: |
+        Creates a language check from a bilingual file and returns its process id.
+
+        Call this operation with either content type:
+
+        - `application/json`: the body is `FileCheckOptions`. For a new check,
+          `fileUrl` is required; the server downloads that HTTP(S) URL (max 100 MiB).
+        - `multipart/form-data`: the body is `FileCheckMultipartRequest`, with a
+          `file` part and a `json` part (`Content-Type: application/json`) whose
+          schema is `FileCheckOptions`. `fileUrl` is not required when `file` is sent.
+
+        Allowed file types: mqxliff, xlf, txlf, xliff, mxliff, sdlxliff, mqxlz, or
+        zip. A zip is expanded server-side; only entries with those extensions are
+        attached (nested zip skipped). Zip archive max 30 MiB; each entry max 100 MiB.
+
+        When both `action` and `processId` are set, the call behaves like
+        `PUT /file-check/{processId}` and neither `file` nor `fileUrl` is required.
+      tags:
+        - Check
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        required: true
+        description: |
+          Use `application/json` or `multipart/form-data`. The schema depends on
+          the content type.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileCheckOptions"
+            example:
+              checkName: My API file check
+              fileUrl: https://example.com/files/sample.xliff
+              onlyImport: false
+              responseLanguage: en-US
+              webhookUrl: https://example.com/hooks/languagecheck
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/FileCheckMultipartRequest"
+            encoding:
+              file:
+                contentType: application/octet-stream
+              json:
+                contentType: application/json
+      responses:
+        "201":
+          description: File check accepted and process created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileCheckResponse"
+        "400":
+          description: Validation error (missing file, fileUrl, or json, or invalid options)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowedError"
+        "413":
+          description: Payload too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailableError"
+  /file-check/{processId}:
+    get:
+      operationId: getFileCheck
+      summary: Get language-check process progress
+      description: |
+        Flat progress snapshot for the language check identified by `processId`
+        (`status`, `timestamp`, `processed`, `entries`, `words`). Progress counts
+        may be null until check data exists; `words` sums imported file word counts.
+      tags:
+        - Check
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: Id of the process (for example from POST /file-check)
+          schema:
+            type: string
+            example: eu_abc123
+      responses:
+        "200":
+          description: Process progress snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileCheckStatusResponse"
+        "400":
+          description: Missing processId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Process not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailableError"
+    put:
+      operationId: putFileCheck
+      summary: Perform an action on a file-check process
+      description: |
+        Body `action` selects the operation. Currently only `START`: starts the
+        language check for an API process in `DRAFT` after draft import (typical
+        after `POST /file-check` with `onlyImport: true`).
+      tags:
+        - Check
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: Id of the process (for example from POST /file-check)
+          schema:
+            type: string
+            example: eu_abc123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FileCheckPutBody"
+      responses:
+        "200":
+          description: Action accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileCheckResponse"
+        "400":
+          description: Missing or invalid action, invalid status, or process already started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Process not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailableError"
+    delete:
+      operationId: deleteFileCheck
+      summary: Delete a language-check process
+      description: |
+        Deletes the process identified by `processId`. Only processes created via
+        `POST /file-check` are accepted.
+      tags:
+        - Check
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - name: processId
+          in: path
+          required: true
+          description: Id of the process (for example from POST /file-check)
+          schema:
+            type: string
+            example: eu_abc123
+      responses:
+        "200":
+          description: Delete accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FileCheckResponse"
+        "400":
+          description: Missing processId or process not created via the API
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          description: Process not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorApiResponse"
+        "429":
+          $ref: "#/components/responses/TooManyRequestsError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailableError"
   /wallet:
     get:
       operationId: getWallet
@@ -626,6 +855,255 @@ components:
           properties:
             data:
               $ref: "#/components/schemas/WalletInfo"
+    FileCheckOptions:
+      type: object
+      description: |
+        Options for `POST /file-check` when `Content-Type` is `application/json`.
+        For a new check, `fileUrl` is required. When both `action` and `processId`
+        are set, the call delegates to `PUT /file-check/{processId}` and `fileUrl`
+        is not required. The same object is the `json` part of a multipart request;
+        there, `fileUrl` is optional if the `file` part is present.
+      properties:
+        checkName:
+          type: string
+          description: Optional display name for the created language check process
+          example: My API file check
+        fileUrl:
+          type: string
+          format: uri
+          description: |
+            HTTP(S) URL the server downloads (max 100 MiB). Required for
+            `application/json` when creating a new check. Omit it for
+            `multipart/form-data` when the `file` part is sent, and when both
+            `action` and `processId` are set.
+          example: https://example.com/files/sample.xliff
+        onlyImport:
+          type: boolean
+          default: false
+          description: |
+            If true, only draft import runs; the webhook (if set) fires after
+            import with `success`, `processId`, `words`, and `error`. If false
+            (default), the language check starts automatically after import.
+            Ignored when both `action` and `processId` are set.
+          example: false
+        action:
+          type: string
+          enum:
+            - START
+          description: |
+            With `processId`, act on an existing process (same as
+            `PUT /file-check/{processId}`). Both `action` and `processId` are
+            required together.
+          example: START
+        processId:
+          type: string
+          description: |
+            With `action`, id of an existing process created via file-check.
+          example: eu_abc123
+        webhookUrl:
+          type: string
+          format: uri
+          description: |
+            Optional HTTP(S) callback. With `onlyImport`, it fires after import.
+            Otherwise it fires when the language check ends or on flow errors.
+          example: https://example.com/hooks/languagecheck
+        webhookOptions:
+          type: object
+          description: |
+            Options for the webhook on the full language-check flow (not
+            `onlyImport`). When `attachXliff` is true and the check succeeds,
+            the callback is `multipart/form-data`; otherwise it is
+            `application/json`.
+          properties:
+            attachXliff:
+              type: boolean
+              default: false
+              description: Attach annotated XLIFF file(s) to the success webhook as multipart
+            reportUrl:
+              type: boolean
+              default: false
+              description: |
+                If true, the final success webhook includes `reportUrl`, a signed
+                GET URL (valid up to 7 days) of the Excel report.
+            xliffUrls:
+              type: boolean
+              default: false
+              description: |
+                If true, the final success webhook includes `xliffUrls`, an array
+                of signed GET URLs (valid up to 7 days) of the annotated XLIFF file(s).
+            stats:
+              type: boolean
+              default: false
+              description: |
+                If true, the final success webhook includes `stats` with segment
+                and word counts per evaluation band (`flawless`, `needsImprovement`,
+                `incorrectMeaning`), each `{ segments, words }`.
+            httpMethod:
+              type: string
+              enum:
+                - POST
+                - PUT
+              default: POST
+              description: |
+                HTTP method used to call `webhookUrl`. Default `POST`.
+            customFields:
+              type: object
+              additionalProperties: true
+              description: |
+                Extra JSON object merged into the webhook payload. Reserved keys
+                (`success`, `processId`, `error`, `words`, `reportUrl`, `xliffUrls`,
+                `stats`) are not overwritten. Nested objects and arrays in a
+                multipart webhook are sent as JSON strings.
+              example:
+                correlationId: job-42
+                source: external-system
+          example:
+            attachXliff: false
+            reportUrl: true
+            xliffUrls: true
+            stats: true
+            httpMethod: POST
+            customFields:
+              correlationId: job-42
+        lockedFilter:
+          type: string
+          enum:
+            - all
+            - locked
+            - unlocked
+          default: all
+          description: Filter segments by lock status
+        percentMin:
+          type: integer
+          minimum: 0
+          default: 0
+          description: Minimum match quality percent
+        percentMax:
+          type: integer
+          minimum: 0
+          default: 101
+          description: Maximum match quality percent
+        translationContext:
+          type: string
+          description: Optional translation or domain context
+        generateTranslationContext:
+          type: boolean
+          default: false
+          description: Whether to generate translation context via AI
+        responseLanguage:
+          allOf:
+            - $ref: "#/components/schemas/Language"
+          description: Language of model responses (comments and explanations)
+          example: en-US
+          default: en-US
+        targetLengthCheck:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+                - greaterThanSource
+                - greaterThanChars
+                - greaterThanSourcePercent
+            threshold:
+              type: integer
+              description: Threshold used by the selected mode
+        shortSegmentsMaxSourceWords:
+          type: integer
+          minimum: 1
+          description: Enable short-segment handling with this max source word count
+    FileCheckMultipartRequest:
+      type: object
+      description: |
+        Body for `POST /file-check` when `Content-Type` is `multipart/form-data`.
+        For a new check, send `file` and optionally `json`. To act on an existing
+        process, send `json` with both `action` and `processId` and omit `file`.
+      properties:
+        file:
+          type: string
+          format: binary
+          description: |
+            Bilingual file (mqxliff, xlf, txlf, xliff, mxliff, sdlxliff, mqxlz) or
+            a zip of those formats. Required for a new check. Omit when `json`
+            contains both `action` and `processId`.
+        json:
+          allOf:
+            - $ref: "#/components/schemas/FileCheckOptions"
+          description: |
+            Check options, sent as a part with Content-Type `application/json`.
+            `fileUrl` is optional when `file` is present.
+    FileCheckResult:
+      type: object
+      required:
+        - success
+        - processId
+      properties:
+        success:
+          type: boolean
+          description: Whether the file-check request was accepted and a process created
+          example: true
+        processId:
+          type: string
+          description: Id of the created process
+          example: eu_abc123
+    FileCheckResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/FileCheckResult"
+    FileCheckStatusResult:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Persisted process status
+          example: RUNNING
+        timestamp:
+          type: integer
+          format: int64
+          nullable: true
+          description: Epoch milliseconds of the last progress update
+          example: 1730736000000
+        processed:
+          type: integer
+          format: int64
+          nullable: true
+          description: Number of segments processed so far
+          example: 42
+        entries:
+          type: integer
+          format: int64
+          nullable: true
+          description: Total segments expected for the check
+          example: 100
+        words:
+          type: integer
+          format: int64
+          nullable: true
+          description: Sum of imported file word counts
+          example: 12500
+    FileCheckStatusResponse:
+      allOf:
+        - $ref: "#/components/schemas/ApiResponse"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/FileCheckStatusResult"
+    FileCheckPutBody:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          enum:
+            - START
+          description: |
+            Action to perform on the process. Currently only `START` (start the
+            language check after draft import).
+          example: START
     ErrorApiResponse:
       allOf:
         - $ref: "#/components/schemas/ApiResponse"
