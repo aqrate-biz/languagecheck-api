@@ -886,6 +886,22 @@ components:
             (default), the language check starts automatically after import.
             Ignored when both `action` and `processId` are set.
           example: false
+        lcAsAuthor:
+          type: boolean
+          default: false
+          description: |
+            If true, at LC finalize the annotated XLIFF export sets LanguageCheck as author
+            of edits (xliffer `lcAsAuthor`). Default false. Ignored when both `action` and
+            `processId` are set (use the value stored at process creation).
+          example: false
+        markAsLocked:
+          type: boolean
+          default: false
+          description: |
+            If true, at LC finalize the annotated XLIFF export locks segments without issues
+            (xliffer `markAsLocked`). Default false. Ignored when both `action` and
+            `processId` are set (use the value stored at process creation).
+          example: false
         action:
           type: string
           enum:
