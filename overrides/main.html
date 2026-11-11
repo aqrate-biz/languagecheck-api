@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  {{ super() }}
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title="LanguageCheck API changelog"
+    href="{{ config.site_url }}/changelog/feed.xml"
+  >
+{% endblock %}
