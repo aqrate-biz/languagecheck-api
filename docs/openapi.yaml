@@ -923,6 +923,44 @@ components:
             Optional HTTP(S) callback. With `onlyImport`, it fires after import.
             Otherwise it fires when the language check ends or on flow errors.
           example: https://example.com/hooks/languagecheck
+        notifications:
+          type: object
+          description: |
+            Optional email notifications to the API caller (process owner). Each of
+            `onStart`, `onError`, `onComplete` may set `email: true`. Defaults are all false.
+            Templates: `lc_check_started`, `lc_check_error`, `lc_check_completed` (Postmark).
+          properties:
+            onStart:
+              type: object
+              properties:
+                email:
+                  type: boolean
+                  default: false
+                  description: Email when the language check starts
+            onError:
+              type: object
+              properties:
+                email:
+                  type: boolean
+                  default: false
+                  description: |
+                    Email on import / start / finalize errors. Template status is one of:
+                    `Not enough words`, `Check cannot start`, `Error processing check`,
+                    `File import error`.
+            onComplete:
+              type: object
+              properties:
+                email:
+                  type: boolean
+                  default: false
+                  description: Email when the language check completes successfully
+          example:
+            onStart:
+              email: true
+            onError:
+              email: true
+            onComplete:
+              email: true
         webhookOptions:
           type: object
           description: |

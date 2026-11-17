@@ -59,6 +59,8 @@ Send the file in one of two ways. With `application/json`, set `fileUrl` to an H
 
 By default the language check starts as soon as the draft import finishes. When it completes, LanguageCheck writes an annotated XLIFF. Set `lcAsAuthor` to record LanguageCheck as the author of those edits, and `markAsLocked` to lock segments that have no issues. An optional `webhookUrl` is called when the check finishes, and also when import, start, or finalize fails. Webhook options can attach the annotated XLIFF, include signed URLs for the Excel report and the annotated files (valid up to 7 days), include segment and word counts by evaluation band, choose `POST` or `PUT`, and merge extra fields into the payload.
 
+Optional `notifications` send email to the process owner. Each of `onStart`, `onError`, and `onComplete` has an `email` flag, default false. Turn on `onStart` when the check starts, `onError` when import, start, or finalize fails, and `onComplete` when the check completes successfully. An error email uses one of these statuses: `Not enough words`, `Check cannot start`, `Error processing check`, `File import error`.
+
 Set `onlyImport` to true to stop after the draft import. The process stays in `DRAFT`, and the webhook, when set, reports `success`, `processId`, `words`, and `error`. Words are debited when the check starts, so this pause is a way to confirm the word count against the wallet before evaluation. Start that process later with `PUT /file-check/{processId}`, or with another `POST /file-check` that sets both `action` and `processId` and omits the file. You can also pass a display name, the language of the explanations, translation context, and filters for locked segments, match percent, short segments, and target length.
 
 ---
