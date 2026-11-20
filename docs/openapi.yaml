@@ -273,9 +273,11 @@ paths:
         - `application/json`: the body is `FileCheckOptions`. For a new check,
           set exactly one of `fileUrl` or `fileUrls`. The server downloads each
           HTTP(S) URL (max 100 MiB). `fileUrls` entries cannot be zip files.
-        - `multipart/form-data`: the body is `FileCheckMultipartRequest`, with a
-          `file` part and a `json` part (`Content-Type: application/json`) whose
-          schema is `FileCheckOptions`. `fileUrl` and `fileUrls` are not required
+        - `multipart/form-data`: the body is `FileCheckMultipartRequest`, with
+          one or more `file` parts and a `json` part (`Content-Type: application/json`)
+          whose schema is `FileCheckOptions`. Repeat the `file` part for each file.
+          Each file is at most 30 MiB, and the multipart request is at most 30 MiB.
+          At most one part may be a zip. `fileUrl` and `fileUrls` are not required
           when `file` is sent.
 
         Allowed file types: mqxliff, xlf, txlf, xliff, mxliff, sdlxliff, mqxlz, or
@@ -310,6 +312,8 @@ paths:
             encoding:
               file:
                 contentType: application/octet-stream
+                style: form
+                explode: true
               json:
                 contentType: application/json
       responses:
@@ -1090,16 +1094,22 @@ components:
       type: object
       description: |
         Body for `POST /file-check` when `Content-Type` is `multipart/form-data`.
-        For a new check, send `file` and optionally `json`. To act on an existing
-        process, send `json` with both `action` and `processId` and omit `file`.
+        For a new check, send one or more `file` parts and optionally `json`.
+        To act on an existing process, send `json` with both `action` and
+        `processId` and omit `file`.
       properties:
         file:
-          type: string
-          format: binary
+          type: array
+          minItems: 1
           description: |
-            Bilingual file (mqxliff, xlf, txlf, xliff, mxliff, sdlxliff, mqxlz) or
-            a zip of those formats. Required for a new check. Omit when `json`
-            contains both `action` and `processId`.
+            One or more bilingual files (mqxliff, xlf, txlf, xliff, mxliff,
+            sdlxliff, mqxlz) or a zip of those formats. Repeat this part for each
+            file. Each file is at most 30 MiB, and the multipart request is at
+            most 30 MiB. At most one part may be a zip. Required for a new check.
+            Omit when `json` contains both `action` and `processId`.
+          items:
+            type: string
+            format: binary
         json:
           allOf:
             - $ref: "#/components/schemas/FileCheckOptions"
