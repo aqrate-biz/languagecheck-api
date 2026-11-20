@@ -271,17 +271,20 @@ paths:
         Call this operation with either content type:
 
         - `application/json`: the body is `FileCheckOptions`. For a new check,
-          `fileUrl` is required; the server downloads that HTTP(S) URL (max 100 MiB).
+          set exactly one of `fileUrl` or `fileUrls`. The server downloads each
+          HTTP(S) URL (max 100 MiB). `fileUrls` entries cannot be zip files.
         - `multipart/form-data`: the body is `FileCheckMultipartRequest`, with a
           `file` part and a `json` part (`Content-Type: application/json`) whose
-          schema is `FileCheckOptions`. `fileUrl` is not required when `file` is sent.
+          schema is `FileCheckOptions`. `fileUrl` and `fileUrls` are not required
+          when `file` is sent.
 
         Allowed file types: mqxliff, xlf, txlf, xliff, mxliff, sdlxliff, mqxlz, or
         zip. A zip is expanded server-side; only entries with those extensions are
         attached (nested zip skipped). Zip archive max 30 MiB; each entry max 100 MiB.
 
         When both `action` and `processId` are set, the call behaves like
-        `PUT /file-check/{processId}` and neither `file` nor `fileUrl` is required.
+        `PUT /file-check/{processId}` and neither `file`, `fileUrl`, nor `fileUrls`
+        is required.
       tags:
         - Check
       security:
@@ -317,7 +320,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/FileCheckResponse"
         "400":
-          description: Validation error (missing file, fileUrl, or json, or invalid options)
+          description: Validation error (missing file, fileUrl, or fileUrls, or json, or invalid options)
           content:
             application/json:
               schema:
@@ -859,10 +862,11 @@ components:
       type: object
       description: |
         Options for `POST /file-check` when `Content-Type` is `application/json`.
-        For a new check, `fileUrl` is required. When both `action` and `processId`
-        are set, the call delegates to `PUT /file-check/{processId}` and `fileUrl`
-        is not required. The same object is the `json` part of a multipart request;
-        there, `fileUrl` is optional if the `file` part is present.
+        For a new check, set exactly one of `fileUrl` or `fileUrls`. When both
+        `action` and `processId` are set, the call delegates to
+        `PUT /file-check/{processId}` and neither URL field is required. The same
+        object is the `json` part of a multipart request; there, `fileUrl` and
+        `fileUrls` are omitted when the `file` part is present.
       properties:
         checkName:
           type: string
@@ -872,11 +876,27 @@ components:
           type: string
           format: uri
           description: |
-            HTTP(S) URL the server downloads (max 100 MiB). Required for
-            `application/json` when creating a new check. Omit it for
+            HTTP(S) URL the server downloads (max 100 MiB; a zip archive max 30 MiB).
+            For `application/json`, set this or `fileUrls`, not both. Omit it for
             `multipart/form-data` when the `file` part is sent, and when both
             `action` and `processId` are set.
           example: https://example.com/files/sample.xliff
+        fileUrls:
+          type: array
+          minItems: 1
+          description: |
+            HTTP(S) URLs the server downloads. Alternative to `fileUrl`: for
+            `application/json`, set this or `fileUrl`, not both. Each URL follows
+            the same limits as a single non-zip `fileUrl` (max 100 MiB). Allowed
+            types are mqxliff, xlf, txlf, xliff, mxliff, sdlxliff, and mqxlz.
+            Zip is not allowed. Omit it when `fileUrl` is set, when the multipart
+            `file` part is sent, and when both `action` and `processId` are set.
+          items:
+            type: string
+            format: uri
+          example:
+            - https://example.com/files/chapter-1.xliff
+            - https://example.com/files/chapter-2.mqxliff
         onlyImport:
           type: boolean
           default: false
@@ -1085,7 +1105,7 @@ components:
             - $ref: "#/components/schemas/FileCheckOptions"
           description: |
             Check options, sent as a part with Content-Type `application/json`.
-            `fileUrl` is optional when `file` is present.
+            `fileUrl` and `fileUrls` are omitted when `file` is present.
     FileCheckResult:
       type: object
       required:

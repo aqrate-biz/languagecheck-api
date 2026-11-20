@@ -5,3 +5,4 @@ site
 firebase-auth-overrides.js
 sdks/generated-sources
 sdks/node_modules
+/.cursor
