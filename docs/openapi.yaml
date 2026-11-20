@@ -1088,8 +1088,11 @@ components:
               description: Threshold used by the selected mode
         shortSegmentsMaxSourceWords:
           type: integer
-          minimum: 1
-          description: Enable short-segment handling with this max source word count
+          minimum: 0
+          description: |
+            Max source word count for short-segment handling. The check runs only
+            when this field is present and greater than 0. `0` turns it off.
+            Omit the field to leave it off.
     FileCheckMultipartRequest:
       type: object
       description: |
