@@ -32,6 +32,9 @@ theme:
 plugins:
   - search # ricerca integrata
 
+hooks:
+  - hooks/changelog_feed.py
+
 extra:
   version:
     provider: mike

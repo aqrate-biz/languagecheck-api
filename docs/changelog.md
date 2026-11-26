@@ -2,6 +2,8 @@
 
 This page tracks notable changes to the LanguageCheck API and documentation.
 
+An [RSS feed](/changelog/feed.xml) of these releases is updated on each documentation build.
+
 ## Unreleased
 
 - No changes yet.

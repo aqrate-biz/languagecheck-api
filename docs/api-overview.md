@@ -48,3 +48,39 @@ This endpoint evaluates multiple bilingual segments in a single request. It acce
 Segments are evaluated independently. The response contains one item per segment, in the same order as the request, and uses the supplied `id` to correlate each result with its input. A successful item contains the same structured quality evaluation returned by `POST /check`. If an individual segment is invalid or cannot be processed, only that item contains an error; the remaining valid segments can still complete successfully.
 
 Request-level validation errors, such as missing shared languages, duplicate segment IDs, or more than 10 segments, reject the entire request. Before processing begins, the endpoint also checks that the wallet has enough words for all valid segments combined.
+
+---
+
+### POST /file-check — File Translation Quality Evaluation
+
+This endpoint starts a language check from a bilingual file and returns a process id. Import and evaluation continue after the response, so use it to submit a file and then follow progress with `GET /file-check/{processId}` or a webhook.
+
+Send the file in one of two ways. With `application/json`, set exactly one of `fileUrl` or `fileUrls`. `fileUrl` is a single HTTP(S) URL (up to 100 MiB for a bilingual file, up to 30 MiB for a zip). `fileUrls` is a list of HTTP(S) URLs; each one follows the same 100 MiB limit, and zip is not allowed. With `multipart/form-data`, repeat the `file` part once for each file and send the options in a `json` part with content type `application/json`. Each file is at most 30 MiB, and the whole multipart request is at most 30 MiB. At most one of those parts may be a zip. Do not send `fileUrl` or `fileUrls` together with the file parts. Accepted files are mqxliff, xlf, txlf, xliff, mxliff, sdlxliff. A zip of those files is expanded on the server; each entry can be up to 100 MiB, and nested zip files are skipped.
+
+By default the language check starts as soon as the draft import finishes. When it completes, LanguageCheck writes an annotated XLIFF. Set `lcAsAuthor` to record LanguageCheck as the author of those edits, and `markAsLocked` to lock segments that have no issues. An optional `webhookUrl` is called when the check finishes, and also when import, start, or finalize fails. Webhook options can attach the annotated XLIFF, include signed URLs for the Excel report and the annotated files (valid up to 7 days), include segment and word counts by evaluation band, choose `POST` or `PUT`, and merge extra fields into the payload.
+
+Optional `notifications` send email to the process owner. Each of `onStart`, `onError`, and `onComplete` has an `email` flag, default false. Turn on `onStart` when the check starts, `onError` when import, start, or finalize fails, and `onComplete` when the check completes successfully. An error email uses one of these statuses: `Not enough words`, `Check cannot start`, `Error processing check`, `File import error`.
+
+Set `onlyImport` to true to stop after the draft import. The process stays in `DRAFT`, and the webhook, when set, reports `success`, `processId`, `words`, and `error`. Words are debited when the check starts, so this pause is a way to confirm the word count against the wallet before evaluation. Start that process later with `PUT /file-check/{processId}`, or with another `POST /file-check` that sets both `action` and `processId` and omits the file. You can also pass a display name, the language of the explanations, translation context, and filters for locked segments, match percent, and target length. Short-segment handling runs only when `shortSegmentsMaxSourceWords` is present and greater than 0.
+
+---
+
+### GET /file-check/{processId} — File Check Progress
+
+This endpoint returns a progress snapshot for a file check. Poll it while the import or the evaluation is still running, and use it to drive a progress indicator next to the webhook.
+
+The snapshot includes the process `status`, the time of the last progress update, how many segments have been processed, how many segments are expected, and the word count of the imported files. Progress counts can be null until check data exists. `words` is the sum of the word counts of the imported files.
+
+---
+
+### PUT /file-check/{processId} — Start an Imported File Check
+
+This endpoint starts the language check for a process created with `POST /file-check` and `onlyImport` set to true. The body is `{ "action": "START" }`. The process must still be in `DRAFT`, and the check must not already have been started.
+
+From that point the flow matches a file check submitted without `onlyImport`: the evaluation runs, the annotated XLIFF is written with the options stored when the process was created, and the webhook is called when the check ends. The same start can be requested with `POST /file-check` by setting both `action` and `processId`.
+
+---
+
+### DELETE /file-check/{processId} — Delete a File Check
+
+This endpoint deletes the file check identified by `processId`. It accepts only processes created through `POST /file-check`. The response confirms that the deletion was accepted and includes the process id.
