@@ -4,7 +4,7 @@ info:
   description: >
     These are the APIs for LanguageCheck (languagecheck.ai), enabling direct
     access to its services through RESTful calls.
-  version: "2.1.1"
+  version: "2.2.0"
   termsOfService: https://languagecheck.ai/terms-of-use
   contact:
     name: LanguageCheck crew

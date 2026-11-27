@@ -8,6 +8,20 @@ An [RSS feed](/changelog/feed.xml) of these releases is updated on each document
 
 - No changes yet.
 
+## 2.2.0 - 2026-11-26
+
+### Added
+
+- `POST /file-check` to start a language check from bilingual files. Send one HTTP(S) URL in `fileUrl`, several URLs in `fileUrls` (no zip), or one or more `file` parts in `multipart/form-data`.
+- `GET /file-check/{processId}` for progress, `PUT /file-check/{processId}` to start a process left in `DRAFT` after `onlyImport`, and `DELETE /file-check/{processId}` to delete a process created through this API.
+- File-check options `onlyImport`, `lcAsAuthor`, `markAsLocked`, `webhookUrl`, and email `notifications` (`onStart`, `onError`, `onComplete`).
+- Rate limits for the file-check operations: 20 requests/minute and 2 requests/second for create, start, and delete; 60 requests/minute and 10 requests/second for progress.
+
+### Changed
+
+- Burst limit for `GET /status` and `GET /wallet` is 5 requests/second.
+- `shortSegmentsMaxSourceWords` turns short-segment handling on only when the field is present and greater than 0.
+
 ## 2.1.1 - 2026-10-05
 
 ### Added
